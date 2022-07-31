@@ -36,7 +36,7 @@ public class AssetsTest extends BaseTest {
     @Test
     void should_create_text_asset() {
         var newAssetName = RandomStringUtils.randomAlphabetic(5);
-        assetsPage.createNewAsset(newAssetName, "10");
+        assetsPage.createNewAsset(newAssetName, "1");
 
         assertTrue(assetsPage.getAssetsTable()
                 .findRowByName(newAssetName)
@@ -46,7 +46,7 @@ public class AssetsTest extends BaseTest {
     @Test
     void should_create_text_numeric_asset() {
         var newAssetName = RandomStringUtils.randomAlphanumeric(5);
-        assetsPage.createNewAsset(newAssetName, "10.0");
+        assetsPage.createNewAsset(newAssetName, "-9.40");
 
         assertTrue(assetsPage.isAssetPresent(newAssetName));
     }
@@ -55,7 +55,7 @@ public class AssetsTest extends BaseTest {
     void should_create_text_numeric_character_asset() {
         var newAssetName = "+!@±$%&^!" + RandomStringUtils.randomAlphanumeric(5);
 
-        assetsPage.createNewAsset(newAssetName, "10");
+        assetsPage.createNewAsset(newAssetName, "1.2");
 
         assertTrue(assetsPage.getAssetsTable()
                 .findRowByName(newAssetName)
@@ -65,7 +65,7 @@ public class AssetsTest extends BaseTest {
     @Test
     void should_not_create_short_name_asset() {
         var newAssetName = RandomStringUtils.randomAlphabetic(1);
-        assetsPage.createNewAsset(newAssetName, "10");
+        assetsPage.createNewAsset(newAssetName, "3.20932");
 
         assertEquals("Invalid asset name, name too short", assetsPage.getErrorMessage());
     }
@@ -73,7 +73,7 @@ public class AssetsTest extends BaseTest {
     @Test
     void should_not_create_long_name_asset() {
         var newAssetName = RandomStringUtils.randomAlphanumeric(34);
-        assetsPage.createNewAsset(newAssetName, "10");
+        assetsPage.createNewAsset(newAssetName, "4.999");
 
         assertEquals("Invalid asset name, name cannot exceed 33 characters", assetsPage.getErrorMessage());
 
