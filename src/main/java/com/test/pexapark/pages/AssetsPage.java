@@ -5,7 +5,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
@@ -32,9 +31,6 @@ public class AssetsPage extends BasePage {
     @FindBy(css = "body > main > div > table > tbody:nth-child(2) > tr")
     private WebElement assetNameRow;
 
-    @FindBy(css = "body > main > div > table > tbody:nth-child(2)")
-    private WebElement assetTable;
-
     @FindBy(css = "body > div > h1")
     private WebElement editAssetHeader;
 
@@ -53,50 +49,41 @@ public class AssetsPage extends BasePage {
     @FindBy(css = "body > main > div > form")
     private WebElement addAssetForm;
 
-    private AssetsTable table;
+    private AssetsTable assetTable;
 
     public AssetsTable getAssetsTable() {
-        return table;
+        return assetTable;
     }
 
     @PostConstruct
     public void init() {
         super.init();
-        table = new AssetsTable(driver);
+        assetTable = new AssetsTable(driver);
     }
 
     public void goToAssetsPage() {
         driver.get(String.format("%s/assets", baseURL));
     }
 
-    public void clickEditSecondAsset() {
-        wait.until(visibilityOf(assetTable));
-        table.editRow(4);
-        wait.until(visibilityOf(editAssetHeader));
-    }
+    public void editAsset(String oldAssetName, String newAssetName, String capacityFactor) {
+        assetTable.findRowByName(oldAssetName)
+                .ifPresent(assetsTableRow -> assetsTableRow
+                    .getEditButton()
+                    .click());
 
-    public void editAsset(String assetName, String capacityFactor) {
         wait.until(visibilityOf(addAssetForm));
 
-        assetNameInput.sendKeys(assetName);
+        assetNameInput.sendKeys(newAssetName);
         capacityFactorInput.sendKeys(capacityFactor);
 
         scrollToAndClick(submitButton);
     }
 
-    public void editAssetName(String assetName) {
-        wait.until(visibilityOf(editAssetHeader));
-        driver.findElement(By.cssSelector("#e-ewtwetwt"));
-        assetNameInput.sendKeys(assetName);
-
-        scrollToAndClick(submitButton);
-    }
-
-    public void setEditAssetHeader_asset_capacity_factor() {
-    }
-
-
-    public void deleteAsset() {
+    public void deleteAsset(String assetName) {
+        assetTable.findRowByName(assetName)
+                .ifPresent(assetsTableRow -> assetsTableRow
+                        .getDeleteButton()
+                        .click());
     }
 
     public void createNewAsset(String assetName, String capacityFactor) {
@@ -114,7 +101,7 @@ public class AssetsPage extends BasePage {
         scrollToAndClick(submitButton);
     }
 
-//  WORKAROUND: using javascript .click() to resolve the "Element is not clickable at point" problem
+    //  WORKAROUND: using javascript .click() to resolve the "Element is not clickable at point" problem
 //  TODO: find neater way to solve this
     private void scrollToAndClick(WebElement element) {
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
@@ -129,4 +116,9 @@ public class AssetsPage extends BasePage {
         return errorMessageBody.getText();
     }
 
+    public boolean isAssetPresent(String newAssetName) {
+        return getAssetsTable()
+                .findRowByName(newAssetName)
+                .isPresent();
+    }
 }

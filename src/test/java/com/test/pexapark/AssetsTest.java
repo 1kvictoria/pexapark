@@ -6,14 +6,10 @@ import com.test.pexapark.pages.LoginPage;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AssetsTest extends BaseTest {
 
@@ -52,9 +48,7 @@ public class AssetsTest extends BaseTest {
         var newAssetName = RandomStringUtils.randomAlphanumeric(5);
         assetsPage.createNewAsset(newAssetName, "10.0");
 
-        assertTrue(assetsPage.getAssetsTable()
-                .findRowByName(newAssetName)
-                .isPresent());
+        assertTrue(assetsPage.isAssetPresent(newAssetName));
     }
 
     @Test
@@ -105,31 +99,42 @@ public class AssetsTest extends BaseTest {
 
     @Test
     void should_edit_asset_name() {
-        String newName = "<-Vic->" + UUID.randomUUID();
+        var oldAssetName = RandomStringUtils.randomAlphanumeric(5);
+        var capacityFactor = "-4.1";
+        assetsPage.createNewAsset(oldAssetName, capacityFactor);
 
-        assetsPage.clickEditSecondAsset();
-        assetsPage.editAsset(newName, "1234.09835");
+        String newAssetName = RandomStringUtils.randomAlphanumeric(9);
 
-        boolean errorIsFound = driver
-                .findElement(By.cssSelector("body > main > div > div > h2"))
-                .getText()
-                .equals("Error");
-        if(errorIsFound) {
-//          do temp corrective action
-        }
-        assertEquals(String.format("%s/assets/%s", baseURL, newName), driver.getCurrentUrl());
-        assertEquals(assetsPage.getThirdElementText(), newName);
+        assertFalse(assetsPage.isAssetPresent(newAssetName));
+
+        assetsPage.editAsset(oldAssetName, newAssetName, capacityFactor);
+
+        assertTrue(assetsPage.isAssetPresent(newAssetName));
     }
 
     @Test
-    void should_delete_asset_with_letters() {}
+    void should_delete_asset_with_letters() {
+        var assetName = RandomStringUtils.randomAlphabetic(6);
+        var capacityFactor = "-4.1";
+        assetsPage.createNewAsset(assetName, capacityFactor);
+
+        assertTrue(assetsPage.isAssetPresent(assetName));
+
+        assetsPage.deleteAsset(assetName);
+
+        assertFalse(assetsPage.isAssetPresent(assetName));
+    }
 
     @Test
-    void should_delete_asset_with_letters_numbers() {}
+    void should_delete_asset_with_letters_numbers() {
+        var assetName = RandomStringUtils.randomAlphanumeric(8);
+        var capacityFactor = "-0.1";
+        assetsPage.createNewAsset(assetName, capacityFactor);
 
-    @Test
-    void should_delete_asset_with_letters_numbers_characaters() {}
+        assertTrue(assetsPage.isAssetPresent(assetName));
 
+        assetsPage.deleteAsset(assetName);
 
-
+        assertFalse(assetsPage.isAssetPresent(assetName));
+    }
 }

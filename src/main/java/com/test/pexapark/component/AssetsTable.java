@@ -35,23 +35,6 @@ public class AssetsTable {
                 .getText();
     }
 
-    public String getCapacityFactorAt(int row) {
-        return getCellAt(row, COLUMN_NAME)
-                .getText();
-    }
-
-    public void editRow(int row) {
-        getCellAt(row, COLUMN_EDIT)
-                .findElement(By.cssSelector("form > button"))
-                .click();
-    }
-
-    public void deleteRow(int row) {
-        getCellAt(row, COLUMN_DELETE)
-                .findElement(By.cssSelector("form > button"))
-                .click();
-    }
-
     public Optional<AssetsTableRow> findRowByName(String name) {
         return getRows().stream()
                 .filter(row -> row.getName().equals(name))
