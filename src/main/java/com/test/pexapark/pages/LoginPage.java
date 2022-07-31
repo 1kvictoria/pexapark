@@ -1,19 +1,17 @@
 package com.test.pexapark.pages;
 
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.LoadableComponent;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Lazy
 @Component
-public class LoginPage extends LoadableComponent<LoginPage> {
-
-    private WebDriver driver;
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+public class LoginPage extends BasePage {
 
     @Value("${credentials.user.name}")
     public String username;
@@ -30,26 +28,10 @@ public class LoginPage extends LoadableComponent<LoginPage> {
     @FindBy(css = "button#submit")
     private WebElement submitButton;
 
-    @Autowired
-    public LoginPage(WebDriver driver) {
-        this.driver = driver;
-        PageFactory.initElements(driver, this);
-    }
-
-    @Override
-    protected void load() {
-        driver.get("https://test-monitor-qa.pexapark.com/login");
-    }
-
-    @Override
-    protected void isLoaded() throws Error {
-        String url = driver.getCurrentUrl();
-        assertTrue(url.endsWith("/login"), "Not on the issue entry page: " + url);
-    }
-
     public void enterCredentials() {
         userNameInput.sendKeys(username);
         passwordInput.sendKeys(password);
         submitButton.click();
     }
+
 }

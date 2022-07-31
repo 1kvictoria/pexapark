@@ -4,23 +4,26 @@ import com.test.pexapark.pages.HomePage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class HomePageTest {
+public class HomePageTest extends BaseTest {
 
     @Autowired
     public HomePage homePage;
 
     @BeforeEach
     void openWebsite(){
-        homePage.get();
+        homePage.goToHomePage();
     }
 
     @Test
     void should_display_homepage() {
         assertEquals(homePage.getTitleText(), "Home");
+    }
+
+    @Test
+    void should_display_content_homepage() {
+        assertEquals(homePage.getContentTextList().size(), 4);
     }
 }

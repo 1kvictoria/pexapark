@@ -4,22 +4,23 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.LoadableComponent;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import javax.annotation.PostConstruct;
+import java.util.List;
 
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOf;
 
 
+@Lazy
 @Component
-public class HomePage extends LoadableComponent<HomePage> {
-
-    private WebDriver driver;
-
-    @Autowired
-    private WebDriverWait wait;
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+public class HomePage extends BasePage {
 
     @FindBy(css = "body > nav")
     private WebElement navigationBar;
@@ -33,21 +34,11 @@ public class HomePage extends LoadableComponent<HomePage> {
     @FindBy(css = "body > div > h1")
     private WebElement title;
 
-    @Autowired
-    public HomePage(WebDriver driver) {
-        this.driver = driver;
-        PageFactory.initElements(driver, this);
-    }
+    @FindBy(css = "body > main > div > div > div > div > div > div > ul > li")
+    private List<WebElement> contentTextList;
 
-    @Override
-    protected void load() {
-        driver.get("https://test-monitor-qa.pexapark.com/");
-    }
-
-    @Override
-    protected void isLoaded() throws Error {
-        String url = driver.getCurrentUrl();
-        assertTrue(url.endsWith(".com/"), "Not on the issue entry page: " + url);
+    public void goToHomePage() {
+        driver.get(baseURL);
     }
 
     public HomePage goToLoginPage(){
@@ -60,4 +51,7 @@ public class HomePage extends LoadableComponent<HomePage> {
         return title.getText();
     }
 
+    public List<WebElement> getContentTextList() {
+        return contentTextList;
+    }
 }
