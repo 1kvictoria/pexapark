@@ -10,29 +10,12 @@ import java.util.stream.Collectors;
 
 public class AssetsTable {
 
-    public static final Integer COLUMN_NAME = 1;
-    public static final Integer COLUMN_CAPACITY_FACTOR = 2;
-    public static final Integer COLUMN_EDIT = 3;
-    public static final Integer COLUMN_DELETE = 3;
-
     private final WebDriver driver;
-
-    private final String cellSelector = "body > main > div > table > tbody:nth-child(2) > tr:nth-child(%s) > td:nth-child(%s)";
 
     private final String rowsSelector = "body > main > div > table > tbody:nth-child(2) > tr";
 
     public AssetsTable(WebDriver driver) {
         this.driver = driver;
-    }
-
-    private WebElement getCellAt(int row, int column) {
-        String cssQuery = String.format(cellSelector, row, column);
-        return driver.findElement(By.cssSelector(cssQuery));
-    }
-
-    public String getNameAt(int row) {
-        return getCellAt(row, COLUMN_NAME)
-                .getText();
     }
 
     public Optional<AssetsTableRow> findRowByName(String name) {
